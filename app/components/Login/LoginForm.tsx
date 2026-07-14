@@ -12,14 +12,14 @@ type LoginFormProps = {
 
 export function LoginForm({onSubmit, isLoading}: LoginFormProps) {
     const {register, handleSubmit, formState: {errors}} = useForm<LoginFormData>({
-        resolver: zodResolver(loginSchema),
-        defaultValues: {rememberMe: false},
+        resolver: zodResolver(loginSchema)
     });
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6" noValidate>
             <FormField
                 iconName="email"
+                iconClassName="lg:text-2xl"
                 label="Email address"
                 type="email"
                 placeholder="your@email.com"
@@ -29,6 +29,7 @@ export function LoginForm({onSubmit, isLoading}: LoginFormProps) {
 
             <FormField
                 iconName="lock"
+                iconClassName="lg:text-2xl"
                 label="Пароль"
                 type="password"
                 placeholder="••••••••"

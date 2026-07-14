@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import {createContext, useContext, useState, useEffect} from 'react';
 import type {ReactNode} from 'react';
 
 type User = {
@@ -9,6 +9,7 @@ type User = {
 type AuthContextType = {
     user: User | null;
     login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+    register: (fullname: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
     logout: () => void;
     isAuthenticated: boolean;
     isLoading: boolean;
@@ -17,9 +18,9 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const MOCK_USERS = [
-    { email: 'user@example.com', password: 'Password123', name: 'John Doe' },
-    { email: 'admin@skyglass.com', password: 'Admin1234', name: 'Admin User' },
-    { email: 'test@test.com', password: 'Test12345', name: 'Test User' },
+    {email: 'user@example.com', password: 'Password123', name: 'John Doe'},
+    {email: 'admin@skyglass.com', password: 'Admin1234', name: 'Admin User'},
+    {email: 'test@test.com', password: 'Test12345', name: 'Test User'},
 ];
 
 const getStoredUser = (): User | null => {
@@ -33,7 +34,7 @@ const getStoredUser = (): User | null => {
     }
 };
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({children}: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(() => getStoredUser());
     const [isLoading, setIsLoading] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
@@ -49,13 +50,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const found = MOCK_USERS.find((u) => u.email === email && u.password === password);
         if (found) {
-            const userData: User = { email: found.email, name: found.name };
+            const userData: User = {email: found.email, name: found.name};
             setUser(userData);
             if (typeof window !== 'undefined') {
                 localStorage.setItem('user', JSON.stringify(userData));
             }
             setIsLoading(false);
-            return { success: true };
+            return {success: true};
         }
 
         setIsLoading(false);
@@ -76,11 +77,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
     }
 
+    const register = async (fullname: string, email: string, password: string) => {
+        setIsLoading(true);
+
+        const existing = MOCK_USERS.find((u) => u.email === email);
+        if (existing) {
+            setIsLoading(false);
+            return {success: false, error: 'Пользователь с таким email уже существует'};
+        }
+
+        const newUser = {email, password, name: fullname};
+        MOCK_USERS.push(newUser);
+
+        const userData: User = {email: newUser.email, name: newUser.name};
+        setUser(userData);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('user', JSON.stringify(userData));
+        }
+        setIsLoading(false);
+        return {success: true};
+    };
+
     return (
         <AuthContext.Provider
             value={{
                 user,
                 login,
+                register,
                 logout,
                 isAuthenticated: !!user,
                 isLoading,

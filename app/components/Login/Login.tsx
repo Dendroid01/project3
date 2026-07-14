@@ -26,7 +26,7 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen py-16 lg:py-[] px-5 lg:px-22.5 flex flex-col items-center justify-center bg-navy">
             <header className="w-full flex flex-col items-center justify-center gap-1 mb-16 lg:mb-5">
-                <Icon name="Cloud" size={1.5} filled={true} className="text-skyBlue"/>
+                <Icon name="Cloud" filled={true} className="text-skyBlue text-2xl"/>
                 <h1 className="text-lightBlue font-bold text-2xl">SkyGlass</h1>
                 <p className="text-gray font-regular">Premium atmospheric insights.</p>
             </header>

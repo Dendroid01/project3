@@ -4,7 +4,7 @@ import {Icon} from "./Icon";
 
 type FormFieldProps = {
     iconName: string;
-    iconSize?: number;
+    iconClassName?: string;
     placeholder?: string;
     label?: string;
     link?: {
@@ -17,7 +17,7 @@ type FormFieldProps = {
 export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
     function FormField({
                            iconName,
-                           iconSize = 1,
+                           iconClassName = "",
                            placeholder,
                            label,
                            link,
@@ -27,7 +27,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
                            ...props
                        }, ref) {
         return (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-0 lg:gap-2">
                 {(label || link) && (
                     <div className="flex items-center justify-between px-2">
                         {label && (
@@ -52,8 +52,8 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
                 )}
 
                 <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-lightGray ">
-                        <Icon name={iconName} size={iconSize}/>
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-fieldGray">
+                        <Icon name={iconName} className={iconClassName} />
                     </span>
                     <input
                         ref={ref}

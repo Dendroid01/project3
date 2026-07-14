@@ -1,6 +1,5 @@
 type IconProps = {
     name: string;
-    size?: number;
     className?: string;
     filled?: boolean;
     weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700;
@@ -9,7 +8,6 @@ type IconProps = {
 
 export function Icon({
                          name,
-                         size = 1,
                          className = "",
                          filled = false,
                          weight = 400,
@@ -19,11 +17,10 @@ export function Icon({
         <span
             className={`material-symbols-outlined ${className}`}
             style={{
-                fontSize: `${size}rem`,
                 fontVariationSettings: `'FILL' ${filled ? 1 : 0}, 'wght' ${weight}, 'GRAD' ${grade}`,
             }}
         >
-      {name}
-    </span>
+            {name}
+        </span>
     );
 }
