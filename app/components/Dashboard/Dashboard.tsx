@@ -1,25 +1,42 @@
-import { TopBar } from './TopBar';
-import { BottomNav } from './BottomNav';
+import { BottomNav } from '~/layouts/BottomNav';
 import { HeroSection } from './HeroSection';
 import { HourlyForecast } from './HourlyForecast';
 import { MetricsGrid } from './Metrics/MetricsGrid';
-import {DailyForecast} from './DailyForecast';
+import { DailyForecast } from './DailyForecast';
+
+import { DesktopSidebar } from '~/layouts/DesktopSidebar';
+import { DesktopHeader } from '~/layouts/DesktopHeader';
 
 export default function DashboardPage() {
     return (
-        <div className="min-h-screen bg-navy flex flex-col relative">
-            <TopBar />
-
-            <div className="flex-1 overflow-y-auto pb-safe">
-                <HeroSection />
-                <HourlyForecast />
-                <MetricsGrid />
-                <DailyForecast />
+        <div className="min-h-screen bg-navy flex flex-col lg:flex-row relative">
+            <div className="hidden lg:block w-64 border-r border-borderGray shrink-0 h-screen sticky top-0 overflow-y-auto">
+                <DesktopSidebar />
             </div>
 
+            <div className="flex-1 flex flex-col min-h-screen">
+                <DesktopHeader className="hidden lg:flex px-8 py-4" />
 
-            <BottomNav />
+                <div className="flex-1 overflow-y-auto p-4 lg:p-8 pt-4 lg:pt-0 flex flex-col gap-6">
+                    <div className="flex flex-col lg:flex-row gap-6">
+                        <div className="flex-1 flex flex-col">
+                            <HeroSection />
+                            <HourlyForecast />
+                            <MetricsGrid />
+                        </div>
 
+                        <div className="w-full lg:w-80 shrink-0">
+                            <div className="bg-darkBlue rounded-3xl border border-borderGray h-fit">
+                                <DailyForecast />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="lg:hidden">
+                <BottomNav />
+            </div>
         </div>
     );
 }

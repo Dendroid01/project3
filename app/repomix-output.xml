@@ -41,7 +41,14 @@ The content is organized as follows:
 
 <directory_structure>
 app.css
+components/Dashboard/BottomNav.tsx
+components/Dashboard/DailyForecast.tsx
 components/Dashboard/Dashboard.tsx
+components/Dashboard/HeroSection.tsx
+components/Dashboard/HourlyForecast.tsx
+components/Dashboard/Metrics/MetricCard.tsx
+components/Dashboard/Metrics/MetricsGrid.tsx
+components/Dashboard/TopBar.tsx
 components/Login/Login.tsx
 components/Login/LoginForm.tsx
 components/Register/Register.tsx
@@ -91,13 +98,281 @@ body {
 }
 </file>
 
-<file path="components/Dashboard/Dashboard.tsx">
-export default function DashboardPage() {
+<file path="components/Dashboard/BottomNav.tsx">
+import {NavLink, useLocation} from 'react-router';
+import {Icon} from '~/shared/Icon';
+
+export function BottomNav() {
+    const location = useLocation();
+
+    const tabs = [
+        {id: 'weather', label: 'Weather', icon: 'sunny', path: '/dashboard'},
+        {id: 'search', label: 'Search', icon: 'search', path: '/search'},
+        {id: 'settings', label: 'Settings', icon: 'settings', path: '/settings'},
+    ];
+
     return (
-        <div className="min-h-screen py-16 px-5 flex flex-col items-center justify-center bg-navy">
+        <div
+            className="sticky bottom-0 left-0 right-0 flex justify-around bg-darkBlue border-t border-borderGray py-2 pb-safe z-50">
+            {tabs.map((tab) => (
+                <NavLink
+                    key={tab.id}
+                    to={tab.path}
+                    className={({isActive}) =>
+                        `flex flex-col items-center gap-1 flex-1 no-underline ${
+                            isActive ? 'text-skyBlue' : 'text-gray'
+                        }`
+                    }
+                >
+                    {({isActive}) => (
+                        <>
+                            <Icon
+                                name={tab.icon}
+                                filled={isActive}
+                                className={`text-2xl ${isActive ? 'text-skyBlue' : 'text-gray'}`}
+                            />
+                            <span className={`text-[10px] ${isActive ? 'text-skyBlue' : 'text-gray'}`}>
+                {tab.label}
+              </span>
+                        </>
+                    )}
+                </NavLink>
+            ))}
         </div>
     );
 }
+</file>
+
+<file path="components/Dashboard/DailyForecast.tsx">
+import { Icon } from '~/shared/Icon';
+
+const mockDaily = [
+    { day: 'Today', icon: 'sunny', pop: 20, min: '16°', max: '26°' },
+    { day: 'Tue', icon: 'cloud', pop: 0, min: '16°', max: '21°' },
+    { day: 'Wed', icon: 'cloudy_snow', pop: 40, min: '13°', max: '21°' },
+    { day: 'Thu', icon: 'rainy', pop: 90, min: '17°', max: '18°' },
+    { day: 'Fri', icon: 'sunny', pop: 30, min: '14°', max: '23°' },
+];
+
+export function DailyForecast() {
+    return (
+        <div className="py-4 px-5">
+            <div className="flex justify-between items-center mb-3">
+                <h3 className="text-lightBlue font-medium">5-DAY FORECAST</h3>
+                <Icon name="chevron_right" className="text-gray text-lg" />
+            </div>
+
+            <div className="bg-darkBlue rounded-3xl border border-borderGray p-2 divide-y divide-borderGray/50">
+                {mockDaily.map((item, index) => (
+                    <div key={index} className="flex items-center justify-between py-3 px-2">
+                        <span className="text-lightBlue font-medium w-10">{item.day}</span>
+
+                        <div className="flex items-center gap-1 w-8">
+                            <Icon name={item.icon} className="text-skyBlue text-xl" />
+                        </div>
+
+                        <div className="flex items-center gap-1 text-gray text-xs w-12">
+                            {item.pop > 0 && (
+                                <>
+                                    <Icon name="water_drop" className="text-skyBlue text-sm" />
+                                    <span>{item.pop}%</span>
+                                </>
+                            )}
+                        </div>
+
+                        <div className="flex gap-3 text-lightBlue font-medium text-sm">
+                            <span className="opacity-50">{item.min}</span>
+                            <span>{item.max}</span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export default DailyForecast;
+</file>
+
+<file path="components/Dashboard/Dashboard.tsx">
+import { TopBar } from './TopBar';
+import { BottomNav } from './BottomNav';
+import { HeroSection } from './HeroSection';
+import { HourlyForecast } from './HourlyForecast';
+import { MetricsGrid } from './Metrics/MetricsGrid';
+import {DailyForecast} from './DailyForecast';
+
+export default function DashboardPage() {
+    return (
+        <div className="min-h-screen bg-navy flex flex-col relative">
+            <TopBar />
+
+            <div className="flex-1 overflow-y-auto pb-safe">
+                <HeroSection />
+                <HourlyForecast />
+                <MetricsGrid />
+                <DailyForecast />
+            </div>
+
+
+            <BottomNav />
+
+        </div>
+    );
+}
+</file>
+
+<file path="components/Dashboard/HeroSection.tsx">
+import { Icon } from '~/shared/Icon';
+
+export function HeroSection() {
+    return (
+        <div className="flex flex-col items-center px-5 text-center">
+            <h2 className="text-lightBlue text-2xl font-bold">San Francisco</h2>
+            <p className="text-gray text-sm mt-1">Monday, Oct 24</p>
+
+            <div className="mt-6 relative">
+                {/* В реальности тут будет <img src="https://openweathermap.org/img/wn/..." />, но для UI используем иконку */}
+                <div className="flex items-center justify-center">
+                    <Icon name="partly_cloudy_day" className="text-[100px]! text-skyBlue" filled />
+                </div>
+                <div className="absolute -top-2 -right-2 bg-skyBlue text-darkCyan text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    LIVE
+                </div>
+            </div>
+
+            <div className="mt-4 text-lightBlue text-7xl font-light tracking-tight">
+                22°
+            </div>
+
+            <p className="text-gray text-lg font-medium mt-1">Partly Cloudy</p>
+
+            <div className="flex gap-6 mt-3 text-gray font-medium">
+                <span>H: 26°</span>
+                <span>L: 14°</span>
+            </div>
+        </div>
+    );
+}
+
+export default HeroSection;
+</file>
+
+<file path="components/Dashboard/HourlyForecast.tsx">
+import { Icon } from '~/shared/Icon';
+
+const mockHourly = [
+    { time: 'Now', temp: '22°', icon: 'sunny' },
+    { time: '2 PM', temp: '24°', icon: 'partly_cloudy_day' },
+    { time: '3 PM', temp: '25°', icon: 'cloud' },
+    { time: '4 PM', temp: '24°', icon: 'cloud' },
+];
+
+export function HourlyForecast() {
+    return (
+        <div className="mt-4 px-5">
+            <div className="flex justify-between items-center mb-3">
+                <h3 className="text-lightBlue font-medium">HOURLY FORECAST</h3>
+                <Icon name="chevron_right" className="text-gray text-lg" />
+            </div>
+
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {mockHourly.map((item, index) => (
+                    <div key={index} className="flex flex-col items-center min-w-15 bg-darkBlue/50 rounded-2xl p-3 border border-borderGray">
+                        <span className="text-gray text-xs">{item.time}</span>
+                        <Icon name={item.icon} className="text-3xl text-skyBlue my-2" />
+                        <span className="text-lightBlue font-bold text-sm">{item.temp}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export default HourlyForecast;
+</file>
+
+<file path="components/Dashboard/Metrics/MetricCard.tsx">
+import {Icon} from '~/shared/Icon';
+
+export interface MetricCardProps {
+    title: string;
+    value: string | number;
+    subtitle?: string;
+    icon: string;
+    progress?: number;
+}
+
+export function MetricCard({title, value, subtitle, icon, progress = 0}: MetricCardProps) {
+    return (
+        <div className="bg-darkBlue rounded-3xl p-4 border border-borderGray flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+                <span className="text-gray text-xs font-bold tracking-wider">{title}</span>
+                <Icon name={icon} className="text-skyBlue text-lg opacity-70"/>
+            </div>
+
+            <div className="mt-auto">
+                <div className="text-lightBlue text-2xl font-semibold">{value}</div>
+                {subtitle && <div className="text-gray text-xs">{subtitle}</div>}
+
+                {progress > 0 && (
+                    <div className="w-full h-1.5 bg-borderGray rounded-full mt-2 overflow-hidden">
+                        <div className="h-full bg-skyBlue rounded-full" style={{width: `${progress}%`}}/>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+export default MetricCard;
+</file>
+
+<file path="components/Dashboard/Metrics/MetricsGrid.tsx">
+import MetricCard from './MetricCard';
+
+const metricsData = [
+    {title: 'UV INDEX', value: '4', subtitle: 'Moderate', icon: 'wb_sunny', progress: 40},
+    {title: 'HUMIDITY', value: '64%', subtitle: 'The dew point is 15°', icon: 'water_drop', progress: 64},
+    {title: 'WIND', value: '12 km/h', subtitle: 'NW', icon: 'air', progress: 0},
+    {title: 'PRESSURE', value: '1012 hPa', subtitle: '', icon: 'speed', progress: 0},
+];
+
+export function MetricsGrid() {
+    return (
+        <div className="px-5 py-4">
+            <div className="grid grid-cols-2 gap-3">
+                {metricsData.map((metric, index) => (
+                    <MetricCard key={index} {...metric} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export default MetricsGrid;
+</file>
+
+<file path="components/Dashboard/TopBar.tsx">
+import { Icon } from '~/shared/Icon';
+
+export function TopBar() {
+    return (
+        <div className="flex items-center justify-between px-5 py-2 bg-navy text-white">
+            <h1 className="text-xl font-bold tracking-tight text-lightBlue">SkyGlass</h1>
+            <div className="flex items-center gap-4">
+                <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                    <Icon name="search" className="text-2xl text-lightBlue" />
+                </button>
+                <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                    <Icon name="settings" className="text-2xl text-lightBlue" />
+                </button>
+            </div>
+        </div>
+    );
+}
+
+export default TopBar;
 </file>
 
 <file path="components/Login/Login.tsx">
