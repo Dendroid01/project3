@@ -1,6 +1,6 @@
-import { forwardRef } from "react";
-import type { ComponentPropsWithoutRef } from "react";
-import { Icon } from "./Icon";
+import type {ComponentPropsWithoutRef} from "react";
+import {forwardRef} from "react";
+import {Icon} from "./Icon";
 
 type FormFieldProps = {
     iconName: string;
@@ -33,7 +33,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
                         {label && (
                             <label
                                 htmlFor={props.id}
-                                className="font-regular text-[#BEC8D2] "
+                                className="font-regular text-gray "
                             >
                                 {label}
                             </label>
@@ -41,7 +41,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
                         {link && (
                             <a
                                 href={link.href}
-                                className="text-[#89CEFF] hover:underline"
+                                className="text-skyBlue hover:underline"
                                 target="_blank"
                                 rel="noreferrer"
                             >
@@ -52,8 +52,8 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
                 )}
 
                 <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-[#D8DEE4] ">
-                        <Icon name={iconName} size={iconSize} />
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-lightGray ">
+                        <Icon name={iconName} size={iconSize}/>
                     </span>
                     <input
                         ref={ref}
@@ -61,13 +61,13 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
                         placeholder={placeholder}
                         id={props.id}
                         className={`
-                            w-full rounded-2xl border border-[#6B7280] py-4.5 pl-10 pr-4
+                            w-full rounded-2xl border border-fieldGray py-4.5 pl-10 pr-4
                             ${
                             error
                                 ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                                : 'border-[#6B7280] focus:border-blue-500 focus:ring-blue-500/20 '
+                                : 'border-fieldGray focus:border-blue-500 focus:ring-blue-500/20 '
                         }
-                            bg-white text-gray-900 placeholder:text-[#6B7280]
+                            bg-white text-gray-900 placeholder:text-fieldGray
                             focus:outline-none focus:ring-2
                             disabled:cursor-not-allowed disabled:opacity-50
                             ${className}

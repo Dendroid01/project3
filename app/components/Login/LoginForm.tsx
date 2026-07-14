@@ -1,8 +1,8 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { LoginFormData } from '~/shared/schemas/auth';
-import { loginSchema } from '~/shared/schemas/auth';
-import { FormField } from '~/shared/FormField';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import type {LoginFormData} from '~/shared/schemas/auth';
+import {loginSchema} from '~/shared/schemas/auth';
+import {FormField} from '~/shared/FormField';
 
 
 type LoginFormProps = {
@@ -10,10 +10,10 @@ type LoginFormProps = {
     isLoading?: boolean;
 };
 
-export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+export function LoginForm({onSubmit, isLoading}: LoginFormProps) {
+    const {register, handleSubmit, formState: {errors}} = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
-        defaultValues: { rememberMe: false },
+        defaultValues: {rememberMe: false},
     });
 
     return (
@@ -33,14 +33,14 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
                 type="password"
                 placeholder="••••••••"
                 error={errors.password?.message}
-                link={{ text: 'Забыли пароль?', href: '/forgot-password' }}
+                link={{text: 'Забыли пароль?', href: '/forgot-password'}}
                 {...register('password')}
             />
 
             <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-4 bg-[#0EA5E9] text-[#003751] rounded-2xl hover:bg-[#89CEFF] disabled:opacity-50 shadow-[0_20px_25px_-5px_rgba(14,165,233,0.1),0_8px_10px_-6px_rgba(14,165,233,0.1)]"
+                className="w-full py-4 bg-blue text-darkCyan rounded-2xl hover:bg-skyBlue disabled:opacity-50 shadow-[0_20px_25px_-5px_rgba(14,165,233,0.1),0_8px_10px_-6px_rgba(14,165,233,0.1)]"
             >
                 {isLoading ? 'Loading...' : 'Sign in'}
             </button>

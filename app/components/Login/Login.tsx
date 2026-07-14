@@ -24,15 +24,15 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen py-16 px-5 flex flex-col items-center justify-center bg-[#0B1326]">
-            <header className="w-full flex flex-col items-center justify-center gap-1 mb-16">
-                <Icon name="Cloud" size={1.5} filled={true} className="text-[#89CEFF]"/>
-                <h1 className="text-[#DAE2FD] font-bold text-2xl">SkyGlass</h1>
-                <p className="text-[#BEC8D2] font-regular">Premium atmospheric insights.</p>
+        <div className="min-h-screen py-16 lg:py-[] px-5 lg:px-22.5 flex flex-col items-center justify-center bg-navy">
+            <header className="w-full flex flex-col items-center justify-center gap-1 mb-16 lg:mb-5">
+                <Icon name="Cloud" size={1.5} filled={true} className="text-skyBlue"/>
+                <h1 className="text-lightBlue font-bold text-2xl">SkyGlass</h1>
+                <p className="text-gray font-regular">Premium atmospheric insights.</p>
             </header>
             <main
-                className="w-full p-6 bg-[#171F31] shadow-[0_8px_32px_#09101F] rounded-4xl border border-[#2d3648] mb-4">
-                <h2 className="text-[#DAE2FD] font-bold text-2xl text-center mb-1.5">Login</h2>
+                className="w-full lg:w-212.5 p-6 lg:py-10 lg:px-13 bg-darkBlue shadow-[0_8px_32px_#09101F] rounded-4xl border border-borderGray mb-4">
+                <h2 className="text-lightBlue font-bold text-2xl text-center lg:mb-0 mb-1.5">Login</h2>
                 {error && (
                     <div className="mb-4 p-3 bg-red-500/10 border border-red-500 rounded-xl">
                         <p className="text-red-400 text-sm">{error}</p>
@@ -41,8 +41,8 @@ export default function LoginPage() {
                 <LoginForm onSubmit={handleSubmit}
                            isLoading={isLoading}/>
             </main>
-            <p className="text-center text-[#BEC8D2] font-regular">
-                Don't have an account? <a href="/register" className="text-[#89CEFF] font-bold hover:underline">Create
+            <p className="text-center text-gray font-regular">
+                Don't have an account? <a href="/register" className="text-skyBlue font-bold hover:underline">Create
                 Account</a>
             </p>
         </div>
