@@ -8,10 +8,9 @@ import { FormField } from '~/shared/FormField';
 type LoginFormProps = {
     onSubmit: (data: LoginFormData) => void | Promise<void>;
     isLoading?: boolean;
-    serverError?: string;
 };
 
-export function LoginForm({ onSubmit, isLoading, serverError }: LoginFormProps) {
+export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: { rememberMe: false },
@@ -37,8 +36,6 @@ export function LoginForm({ onSubmit, isLoading, serverError }: LoginFormProps) 
                 link={{ text: 'Забыли пароль?', href: '/forgot-password' }}
                 {...register('password')}
             />
-
-            {serverError && <p className="text-red-500 text-sm">{serverError}</p>}
 
             <button
                 type="submit"

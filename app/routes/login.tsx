@@ -1,5 +1,5 @@
 import type { Route } from "./+types/login";
-import LoginPage from "~/components/Login/Login"; // Импортируем правильный компонент
+import LoginPage from "~/components/Login/Login";
 
 export function meta({}: Route.MetaArgs) {
   return [

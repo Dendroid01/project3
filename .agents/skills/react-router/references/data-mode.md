@@ -41,7 +41,7 @@ const router = createBrowserRouter([
     Component: Root,
     loader: rootLoader,
     children: [
-      { index: true, Component: Home },
+      { index: true, Component: Login },
       {
         path: "projects/:projectId",
         Component: Project,
