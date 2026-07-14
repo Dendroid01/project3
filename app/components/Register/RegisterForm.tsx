@@ -54,14 +54,13 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
                 type="password"
                 placeholder="••••••••"
                 error={errors.confirmPassword?.message}
-                className="mb-4"
                 {...register('confirmPassword')}
             />
 
             <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-4 bg-blue text-darkCyan rounded-2xl hover:bg-skyBlue disabled:opacity-50 shadow-[0_20px_25px_-5px_rgba(14,165,233,0.1),0_8px_10px_-6px_rgba(14,165,233,0.1)]"
+                className="w-full mt-4 py-4 bg-blue text-darkCyan rounded-2xl hover:bg-skyBlue disabled:opacity-50 shadow-[0_20px_25px_-5px_rgba(14,165,233,0.1),0_8px_10px_-6px_rgba(14,165,233,0.1)]"
             >
                 {isLoading ? 'Loading...' : 'Create account'}
             </button>

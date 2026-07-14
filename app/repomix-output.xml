@@ -1,0 +1,790 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+app.css
+components/Dashboard/Dashboard.tsx
+components/Login/Login.tsx
+components/Login/LoginForm.tsx
+components/Register/Register.tsx
+components/Register/RegisterForm.tsx
+layouts/AuthLayout.tsx
+root.tsx
+routes.ts
+routes/dashboard.tsx
+routes/login.tsx
+routes/register.tsx
+shared/context/AuthContext.tsx
+shared/FormField.tsx
+shared/Icon.tsx
+shared/ProtectedRoute.tsx
+shared/schemas/auth.ts
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="app.css">
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+    --color-navy: #0B1326;
+    --color-darkBlue: #171F31;
+    --color-lightBlue: #DAE2FD;
+    --color-gray: #BEC8D2;
+    --color-lightGray: #D8DEE4;
+    --color-skyBlue: #89CEFF;
+    --color-blue: #0EA5E9;
+    --color-darkCyan: #003751;
+    --color-borderGray: #2d3648;
+    --color-fieldGray: #6B7280;
+    --color-shadowBlue: #09101F;
+}
+html,
+body {
+    @apply bg-white dark:bg-gray-950;
+
+    @media (prefers-color-scheme: dark) {
+        color-scheme: dark;
+    }
+}
+</file>
+
+<file path="components/Dashboard/Dashboard.tsx">
+export default function DashboardPage() {
+    return (
+        <div className="min-h-screen py-16 px-5 flex flex-col items-center justify-center bg-navy">
+        </div>
+    );
+}
+</file>
+
+<file path="components/Login/Login.tsx">
+import {useNavigate} from 'react-router';
+import {useState, useEffect} from 'react';
+import {LoginForm} from '~/components/Login/LoginForm';
+import {Icon} from '~/shared/Icon';
+import {useAuth} from '~/shared/context/AuthContext';
+
+export default function LoginPage() {
+    const navigate = useNavigate();
+    const {login, isLoading, isAuthenticated} = useAuth();
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/dashboard');
+        }
+    }, [isAuthenticated, navigate]);
+
+    const handleSubmit = async (data: { email: string; password: string; rememberMe?: boolean }) => {
+        setError('');
+        const result = await login(data.email, data.password);
+        if (!result.success && result.error) {
+            setError(result.error);
+        }
+    };
+
+    return (
+        <div className="min-h-screen py-16 lg:py-[] px-5 lg:px-22.5 flex flex-col items-center justify-center bg-navy">
+            <header className="w-full flex flex-col items-center justify-center gap-1 mb-16 lg:mb-5">
+                <Icon name="Cloud" filled={true} className="text-skyBlue text-2xl"/>
+                <h1 className="text-lightBlue font-bold text-2xl">SkyGlass</h1>
+                <p className="text-gray font-regular">Premium atmospheric insights.</p>
+            </header>
+            <main
+                className="w-full lg:w-212.5 p-6 lg:py-10 lg:px-13 bg-darkBlue shadow-[0_8px_32px_#09101F] rounded-4xl border border-borderGray mb-4">
+                <h2 className="text-lightBlue font-bold text-2xl text-center lg:mb-0 mb-1.5">Login</h2>
+                {error && (
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500 rounded-xl">
+                        <p className="text-red-400 text-sm">{error}</p>
+                    </div>
+                )}
+                <LoginForm onSubmit={handleSubmit}
+                           isLoading={isLoading}/>
+            </main>
+            <p className="text-center text-gray font-regular">
+                Don't have an account? <a href="/register" className="text-skyBlue font-bold hover:underline">Create
+                Account</a>
+            </p>
+        </div>
+    );
+}
+</file>
+
+<file path="components/Login/LoginForm.tsx">
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import type {LoginFormData} from '~/shared/schemas/auth';
+import {loginSchema} from '~/shared/schemas/auth';
+import {FormField} from '~/shared/FormField';
+
+
+type LoginFormProps = {
+    onSubmit: (data: LoginFormData) => void | Promise<void>;
+    isLoading?: boolean;
+};
+
+export function LoginForm({onSubmit, isLoading}: LoginFormProps) {
+    const {register, handleSubmit, formState: {errors}} = useForm<LoginFormData>({
+        resolver: zodResolver(loginSchema)
+    });
+
+    return (
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6" noValidate>
+            <FormField
+                iconName="email"
+                iconClassName="lg:text-2xl"
+                label="Email address"
+                type="email"
+                placeholder="your@email.com"
+                error={errors.email?.message}
+                {...register('email')}
+            />
+
+            <FormField
+                iconName="lock"
+                iconClassName="lg:text-2xl"
+                label="Пароль"
+                type="password"
+                placeholder="••••••••"
+                error={errors.password?.message}
+                link={{text: 'Забыли пароль?', href: '/forgot-password'}}
+                {...register('password')}
+            />
+
+            <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-4 bg-blue text-darkCyan rounded-2xl hover:bg-skyBlue disabled:opacity-50 shadow-[0_20px_25px_-5px_rgba(14,165,233,0.1),0_8px_10px_-6px_rgba(14,165,233,0.1)]"
+            >
+                {isLoading ? 'Loading...' : 'Sign in'}
+            </button>
+        </form>
+    );
+}
+</file>
+
+<file path="components/Register/Register.tsx">
+import { useNavigate } from 'react-router';
+import { useState, useEffect } from 'react';
+import { RegisterForm } from '~/components/Register/RegisterForm';
+import { Icon } from '~/shared/Icon';
+import { useAuth } from '~/shared/context/AuthContext';
+import type { RegisterFormData } from '~/shared/schemas/auth';
+
+export default function RegisterPage() {
+    const navigate = useNavigate();
+    const { register, isLoading, isAuthenticated } = useAuth();
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/dashboard');
+        }
+    }, [isAuthenticated, navigate]);
+
+    const handleSubmit = async (data: RegisterFormData) => {
+        setError('');
+        const result = await register(data.name, data.email, data.password);
+        if (!result.success && result.error) {
+            setError(result.error);
+        }
+    };
+
+    return (
+        <div className="min-h-screen py-2 lg:py-5 px-5 lg:px-22.5 flex flex-col items-center justify-center bg-navy">
+            <main className="w-full lg:w-212.5 p-6 lg:py-5 lg:px-13 bg-darkBlue shadow-[0_8px_32px_#09101F] rounded-4xl border border-borderGray mb-4">
+                <h2 className="text-lightBlue font-bold text-2xl text-center lg:mb-0 mb-1.5">Create account</h2>
+                {error && (
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500 rounded-xl">
+                        <p className="text-red-400 text-sm">{error}</p>
+                    </div>
+                )}
+                <RegisterForm onSubmit={handleSubmit} isLoading={isLoading} />
+            </main>
+            <p className="text-center text-gray font-regular">
+                Already have an account?{' '}
+                <a href="/" className="text-skyBlue font-bold hover:underline">
+                    Sign in
+                </a>
+            </p>
+        </div>
+    );
+}
+</file>
+
+<file path="components/Register/RegisterForm.tsx">
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { RegisterFormData } from '~/shared/schemas/auth';
+import { registerSchema } from '~/shared/schemas/auth';
+import { FormField } from '~/shared/FormField';
+
+type RegisterFormProps = {
+    onSubmit: (data: RegisterFormData) => void | Promise<void>;
+    isLoading?: boolean;
+};
+
+export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<RegisterFormData>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
+    });
+
+    return (
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 lg:gap-4" noValidate>
+            <FormField
+                iconName="person"
+                label="Full name"
+                type="text"
+                placeholder="John Doe"
+                error={errors.name?.message}
+                {...register('name')}
+            />
+
+            <FormField
+                iconName="email"
+                label="Email address"
+                type="email"
+                placeholder="your@email.com"
+                error={errors.email?.message}
+                {...register('email')}
+            />
+
+            <FormField
+                iconName="lock"
+                label="Password"
+                type="password"
+                placeholder="••••••••"
+                error={errors.password?.message}
+                {...register('password')}
+            />
+
+            <FormField
+                iconName="lock_reset"
+                label="Confirm password"
+                type="password"
+                placeholder="••••••••"
+                error={errors.confirmPassword?.message}
+                {...register('confirmPassword')}
+            />
+
+            <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full mt-4 py-4 bg-blue text-darkCyan rounded-2xl hover:bg-skyBlue disabled:opacity-50 shadow-[0_20px_25px_-5px_rgba(14,165,233,0.1),0_8px_10px_-6px_rgba(14,165,233,0.1)]"
+            >
+                {isLoading ? 'Loading...' : 'Create account'}
+            </button>
+        </form>
+    );
+}
+</file>
+
+<file path="layouts/AuthLayout.tsx">
+import { useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router';
+import { useAuth } from '~/shared/context/AuthContext';
+
+export default function AuthLayout() {
+    const { isAuthenticated, isLoading } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isLoading && !isAuthenticated) {
+            navigate('/', { replace: true });
+        }
+    }, [isAuthenticated, isLoading, navigate]);
+
+    if (isLoading || !isAuthenticated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#0B1326]">
+                <div className="text-[#DAE2FD]">Loading...</div>
+            </div>
+        );
+    }
+
+    return <Outlet />;
+}
+</file>
+
+<file path="root.tsx">
+import {
+    isRouteErrorResponse,
+    Links,
+    Meta,
+    Outlet,
+    Scripts,
+    ScrollRestoration,
+} from "react-router";
+
+import type {Route} from "./+types/root";
+import "./app.css";
+import {AuthProvider} from "~/shared/context/AuthContext";
+
+export const links: Route.LinksFunction = () => [
+    {rel: "preconnect", href: "https://fonts.googleapis.com"},
+    {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+    },
+    {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    },
+    {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
+    },
+];
+
+export function Layout({children}: { children: React.ReactNode }) {
+    return (
+        <html lang="en">
+        <head>
+            <meta charSet="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <Meta/>
+            <Links/>
+        </head>
+        <body>
+        <AuthProvider>
+            {children}
+        </AuthProvider>
+        <ScrollRestoration/>
+        <Scripts/>
+        </body>
+        </html>
+    );
+}
+
+export default function App() {
+    return <Outlet/>;
+}
+
+export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
+    let message = "Oops!";
+    let details = "An unexpected error occurred.";
+    let stack: string | undefined;
+
+    if (isRouteErrorResponse(error)) {
+        message = error.status === 404 ? "404" : "Error";
+        details =
+            error.status === 404
+                ? "The requested page could not be found."
+                : error.statusText || details;
+    } else if (import.meta.env.DEV && error && error instanceof Error) {
+        details = error.message;
+        stack = error.stack;
+    }
+
+    return (
+        <main className="pt-16 p-4 container mx-auto">
+            <h1>{message}</h1>
+            <p>{details}</p>
+            {stack && (
+                <pre className="w-full p-4 overflow-x-auto">
+          <code>{stack}</code>
+        </pre>
+            )}
+        </main>
+    );
+}
+</file>
+
+<file path="routes.ts">
+import { type RouteConfig, index, route, layout } from "@react-router/dev/routes";
+
+export default [
+    index("routes/login.tsx"),
+    route('register', 'routes/register.tsx'),
+
+    layout("layouts/AuthLayout.tsx", [
+        route("dashboard", "routes/dashboard.tsx"),
+    ]),
+] satisfies RouteConfig;
+</file>
+
+<file path="routes/dashboard.tsx">
+import type { Route } from "./+types/dashboard";
+import DashboardPage from "~/components/Dashboard/Dashboard";
+
+export function meta({}: Route.MetaArgs) {
+    return [
+        { title: "Dashboard" },
+        { name: "description", content: "Dashboard" },
+    ];
+}
+
+export default function Dashboard() {
+    return <DashboardPage />;
+}
+</file>
+
+<file path="routes/login.tsx">
+import type { Route } from "./+types/login";
+import LoginPage from "~/components/Login/Login";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Login" },
+    { name: "description", content: "Sign in to your account" },
+  ];
+}
+
+export default function Login() {
+  return <LoginPage />;
+}
+</file>
+
+<file path="routes/register.tsx">
+import type { Route } from './+types/register';
+import RegisterPage from '~/components/Register/Register';
+
+export function meta({}: Route.MetaArgs) {
+    return [
+        { title: 'Register' },
+        { name: 'description', content: 'Create a new account' },
+    ];
+}
+
+export default function Register() {
+    return <RegisterPage />;
+}
+</file>
+
+<file path="shared/context/AuthContext.tsx">
+import {createContext, useContext, useState, useEffect} from 'react';
+import type {ReactNode} from 'react';
+
+type User = {
+    email: string;
+    name?: string;
+};
+
+type AuthContextType = {
+    user: User | null;
+    login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+    register: (fullname: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+    logout: () => void;
+    isAuthenticated: boolean;
+    isLoading: boolean;
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const MOCK_USERS = [
+    {email: 'user@example.com', password: 'Password123', name: 'John Doe'},
+    {email: 'admin@skyglass.com', password: 'Admin1234', name: 'Admin User'},
+    {email: 'test@test.com', password: 'Test12345', name: 'Test User'},
+];
+
+const getStoredUser = (): User | null => {
+    if (typeof window === 'undefined') return null;
+    try {
+        const raw = localStorage.getItem('user');
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        localStorage.removeItem('user');
+        return null;
+    }
+};
+
+export function AuthProvider({children}: { children: ReactNode }) {
+    const [user, setUser] = useState<User | null>(() => getStoredUser());
+    const [isLoading, setIsLoading] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    useEffect(() => {
+        const stored = getStoredUser();
+        setUser(stored);
+        setIsInitialized(true);
+    }, []);
+
+    const login = async (email: string, password: string) => {
+        setIsLoading(true);
+
+        const found = MOCK_USERS.find((u) => u.email === email && u.password === password);
+        if (found) {
+            const userData: User = {email: found.email, name: found.name};
+            setUser(userData);
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('user', JSON.stringify(userData));
+            }
+            setIsLoading(false);
+            return {success: true};
+        }
+
+        setIsLoading(false);
+        return {
+            success: false,
+            error: 'Invalid email or password. Try: user@example.com / Password123',
+        };
+    };
+
+    const logout = () => {
+        setUser(null);
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('user');
+        }
+    };
+
+    if (!isInitialized) {
+        return null;
+    }
+
+    const register = async (fullname: string, email: string, password: string) => {
+        setIsLoading(true);
+
+        const existing = MOCK_USERS.find((u) => u.email === email);
+        if (existing) {
+            setIsLoading(false);
+            return {success: false, error: 'Пользователь с таким email уже существует'};
+        }
+
+        const newUser = {email, password, name: fullname};
+        MOCK_USERS.push(newUser);
+
+        const userData: User = {email: newUser.email, name: newUser.name};
+        setUser(userData);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('user', JSON.stringify(userData));
+        }
+        setIsLoading(false);
+        return {success: true};
+    };
+
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                login,
+                register,
+                logout,
+                isAuthenticated: !!user,
+                isLoading,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
+}
+
+export function useAuth() {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+}
+</file>
+
+<file path="shared/FormField.tsx">
+import type {ComponentPropsWithoutRef} from "react";
+import {forwardRef} from "react";
+import {Icon} from "./Icon";
+
+type FormFieldProps = {
+    iconName: string;
+    iconClassName?: string;
+    placeholder?: string;
+    label?: string;
+    link?: {
+        text: string;
+        href: string;
+    };
+    error?: string;
+} & Omit<ComponentPropsWithoutRef<'input'>, 'placeholder'>;
+
+export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
+    function FormField({
+                           iconName,
+                           iconClassName = "",
+                           placeholder,
+                           label,
+                           link,
+                           className = "",
+                           error,
+                           type = "text",
+                           ...props
+                       }, ref) {
+        return (
+            <div className="flex flex-col gap-0 lg:gap-2">
+                {(label || link) && (
+                    <div className="flex items-center justify-between px-2">
+                        {label && (
+                            <label
+                                htmlFor={props.id}
+                                className="font-regular text-gray "
+                            >
+                                {label}
+                            </label>
+                        )}
+                        {link && (
+                            <a
+                                href={link.href}
+                                className="text-skyBlue hover:underline"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                {link.text}
+                            </a>
+                        )}
+                    </div>
+                )}
+
+                <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-fieldGray">
+                        <Icon name={iconName} className={iconClassName} />
+                    </span>
+                    <input
+                        ref={ref}
+                        type={type}
+                        placeholder={placeholder}
+                        id={props.id}
+                        className={`
+                            w-full rounded-2xl border border-fieldGray py-4.5 pl-10 pr-4
+                            ${
+                            error
+                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                                : 'border-fieldGray focus:border-blue-500 focus:ring-blue-500/20 '
+                        }
+                            bg-white text-gray-900 placeholder:text-fieldGray
+                            focus:outline-none focus:ring-2
+                            disabled:cursor-not-allowed disabled:opacity-50
+                            ${className}
+                        `}
+                        {...props}
+                    />
+                </div>
+
+                {error && <p className="text-sm text-red-500">{error}</p>}
+            </div>
+        );
+    }
+);
+
+FormField.displayName = "FormField";
+</file>
+
+<file path="shared/Icon.tsx">
+type IconProps = {
+    name: string;
+    className?: string;
+    filled?: boolean;
+    weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700;
+    grade?: -25 | 0 | 25;
+};
+
+export function Icon({
+                         name,
+                         className = "",
+                         filled = false,
+                         weight = 400,
+                         grade = 0,
+                     }: IconProps) {
+    return (
+        <span
+            className={`material-symbols-outlined ${className}`}
+            style={{
+                fontVariationSettings: `'FILL' ${filled ? 1 : 0}, 'wght' ${weight}, 'GRAD' ${grade}`,
+            }}
+        >
+            {name}
+        </span>
+    );
+}
+</file>
+
+<file path="shared/ProtectedRoute.tsx">
+import { Navigate } from 'react-router';
+import { useAuth } from './context/AuthContext';
+
+export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+    const { isAuthenticated } = useAuth();
+
+    if (!isAuthenticated) {
+        return <Navigate to="/" replace />;
+    }
+
+    return <>{children}</>;
+}
+</file>
+
+<file path="shared/schemas/auth.ts">
+import { z } from 'zod';
+
+const baseAuthSchema = {
+    email: z.string().email('Введите корректный email'),
+    password: z.string()
+        .min(8, 'Пароль должен содержать минимум 8 символов')
+        .regex(/[A-Z]/, 'Пароль должен содержать заглавную букву')
+        .regex(/[0-9]/, 'Пароль должен содержать цифру'),
+};
+
+export const loginSchema = z.object({
+    ...baseAuthSchema,
+    rememberMe: z.boolean().optional(),
+});
+
+export const registerSchema = z.object({
+    ...baseAuthSchema,
+    name: z.string().min(2, 'Имя обязательно'),
+    confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: 'Пароли не совпадают',
+    path: ['confirmPassword'],
+});
+
+export type LoginFormData = z.infer<typeof loginSchema>;
+export type RegisterFormData = z.infer<typeof registerSchema>;
+</file>
+
+</files>
