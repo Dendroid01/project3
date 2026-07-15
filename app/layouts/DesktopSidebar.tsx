@@ -4,9 +4,7 @@ import { Icon } from '~/shared/Icon';
 export function DesktopSidebar() {
     const menuItems = [
         { label: 'Weather', icon: 'cloud', to: '/dashboard' },
-        { label: 'Cities', icon: 'location_city', to: '/cities' },
-        { label: 'Maps', icon: 'map', to: '/maps' },
-        { label: 'Insights', icon: 'analytics', to: '/insights' },
+        { label: 'Favorites', icon: 'location_city', to: '/cities' },
     ];
 
     return (

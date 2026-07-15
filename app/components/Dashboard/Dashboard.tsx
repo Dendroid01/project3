@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router';
+import {useSearchParams} from 'react-router';
 import {BottomNav} from '~/layouts/BottomNav';
 import {DesktopSidebar} from '~/layouts/DesktopSidebar';
 import {DesktopHeader} from '~/layouts/DesktopHeader';
@@ -6,12 +6,13 @@ import {HeroSection} from './HeroSection';
 import {HourlyForecast} from './HourlyForecast';
 import {MetricsGrid} from './Metrics/MetricsGrid';
 import {DailyForecast} from './DailyForecast';
+import {FavoriteButton} from './FavoriteButton';
 import {useWeatherWithLocation} from '~/shared/hooks/useWeatherWithLocation';
 
 export default function DashboardPage() {
     const [searchParams] = useSearchParams();
     const city = searchParams.get('city') || undefined;
-    const { data, isLoading, error } = useWeatherWithLocation(city);
+    const {data, isLoading, error} = useWeatherWithLocation(city);
 
     if (isLoading) {
         return (
@@ -48,9 +49,15 @@ export default function DashboardPage() {
                             <MetricsGrid weatherData={data.weather}/>
                         </div>
 
-                        <div className="w-full lg:w-80 shrink-0">
+                        <div className="w-full lg:w-80 shrink-0 flex flex-col justify-between">
                             <div className="bg-darkBlue rounded-3xl border border-borderGray h-fit">
                                 <DailyForecast forecastData={data.forecast}/>
+                            </div>
+                            <div className="p-4 pb-0 flex justify-end">
+                                <FavoriteButton
+                                    weatherData={data.weather}
+                                    cityName={data?.cityName}
+                                />
                             </div>
                         </div>
                     </div>
