@@ -1,3 +1,4 @@
+import { useSearchParams } from 'react-router';
 import {BottomNav} from '~/layouts/BottomNav';
 import {DesktopSidebar} from '~/layouts/DesktopSidebar';
 import {DesktopHeader} from '~/layouts/DesktopHeader';
@@ -8,7 +9,9 @@ import {DailyForecast} from './DailyForecast';
 import {useWeatherWithLocation} from '~/shared/hooks/useWeatherWithLocation';
 
 export default function DashboardPage() {
-    const {data, isLoading, error} = useWeatherWithLocation();
+    const [searchParams] = useSearchParams();
+    const city = searchParams.get('city') || undefined;
+    const { data, isLoading, error } = useWeatherWithLocation(city);
 
     if (isLoading) {
         return (

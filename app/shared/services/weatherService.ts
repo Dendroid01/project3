@@ -107,3 +107,18 @@ export const fetchCityName = async (lat: number, lon: number): Promise<string> =
     const data = await getCurrentWeather(lat, lon);
     return data.name;
 };
+
+export async function getCoordinatesByCity(city: string): Promise<{ lat: number; lon: number; name: string } | null> {
+    const API_KEY = import.meta.env.VITE_WEATHER_API_KEY || '';
+    const response = await fetch(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (!data || data.length === 0) return null;
+    return {
+        lat: data[0].lat,
+        lon: data[0].lon,
+        name: data[0].name,
+    };
+}

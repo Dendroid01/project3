@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { getCurrentWeather, getFiveDayForecast } from '~/shared/services/weatherService';
+import {useState, useEffect} from 'react';
+import {getCurrentWeather, getFiveDayForecast, getCoordinatesByCity} from '~/shared/services/weatherService';
 
 const FALLBACK_LAT = 55.7558;
 const FALLBACK_LON = 37.6173;
@@ -34,74 +34,68 @@ const reverseGeocode = async (lat: number, lon: number): Promise<string | null> 
     }
 };
 
-export function useWeatherWithLocation() {
+export function useWeatherWithLocation(cityParam?: string) {
     const [data, setData] = useState<WeatherData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
-    const [isGeoLoading, setIsGeoLoading] = useState(true);
+
+    // Общая функция загрузки погоды по координатам
+    const fetchWeather = async (lat: number, lon: number, geoName?: string) => {
+        try {
+            const [weatherData, forecastData] = await Promise.all([
+                getCurrentWeather(lat, lon),
+                getFiveDayForecast(lat, lon),
+            ]);
+            setData({
+                weather: weatherData,
+                forecast: forecastData,
+                cityName: geoName || weatherData.name,       // если geoName передан — используем его
+                weatherCityName: weatherData.name,           // всегда имя из API
+            });
+            setError(null);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
+        setLoading(true);
+        setError(null);
+
+        if (cityParam) {
+            getCoordinatesByCity(cityParam)
+                .then((coords) => {
+                    if (coords) {
+                        fetchWeather(coords.lat, coords.lon, coords.name); // передаём имя из геокодинга
+                    } else {
+                        setError(`Город "${cityParam}" не найден`);
+                        setLoading(false);
+                    }
+                })
+                .catch(() => {
+                    setError('Ошибка при поиске города');
+                    setLoading(false);
+                });
+            return;
+        }
+
         if (!navigator.geolocation) {
-            setCoords({ lat: FALLBACK_LAT, lon: FALLBACK_LON });
-            setIsGeoLoading(false);
+            fetchWeather(FALLBACK_LAT, FALLBACK_LON);
             return;
         }
-
         navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-
-                setCoords({
-                    lat: latitude,
-                    lon: longitude,
-                });
-                setIsGeoLoading(false);
+            async (position) => {
+                const {latitude, longitude} = position.coords;
+                // Получаем имя через reverse‑геокодинг
+                const geoName = await reverseGeocode(latitude, longitude);
+                fetchWeather(latitude, longitude, geoName || undefined);
             },
-            () => {
-                setCoords({ lat: FALLBACK_LAT, lon: FALLBACK_LON });
-                setIsGeoLoading(false);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 20000,
-                maximumAge: 60000,
-            }
+            () => fetchWeather(FALLBACK_LAT, FALLBACK_LON),
+            {enableHighAccuracy: true, timeout: 20000, maximumAge: 60000}
         );
-    }, []);
+    }, [cityParam]);
 
-    useEffect(() => {
-        if (!coords) {
-            return;
-        }
-
-        const fetchData = async () => {
-            setLoading(true);
-
-            try {
-                const [weatherData, forecastData, geoCityName] = await Promise.all([
-                    getCurrentWeather(coords.lat, coords.lon),
-                    getFiveDayForecast(coords.lat, coords.lon),
-                    reverseGeocode(coords.lat, coords.lon)
-                ]);
-
-                setData({
-                    weather: weatherData,
-                    forecast: forecastData,
-                    cityName: geoCityName || undefined,
-                    weatherCityName: weatherData?.name
-                });
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Unknown error');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [coords]);
-
-    const isLoading = isGeoLoading || loading;
-
-    return { data, isLoading, error };
+    return {data, isLoading: loading, error};
 }
