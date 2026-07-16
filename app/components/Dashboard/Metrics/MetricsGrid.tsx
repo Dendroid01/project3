@@ -55,5 +55,3 @@ export function MetricsGrid({weatherData}: MetricsGridProps) {
         </div>
     );
 }
-
-export default MetricsGrid;

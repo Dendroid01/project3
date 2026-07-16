@@ -15,5 +15,3 @@ export function TopBar() {
         </div>
     );
 }
-
-export default TopBar;

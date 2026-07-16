@@ -6,5 +6,6 @@ export default [
 
     layout("layouts/AuthLayout.tsx", [
         route("dashboard", "routes/dashboard.tsx"),
+        route("favorites", "routes/favorites.tsx"),
     ]),
 ] satisfies RouteConfig;

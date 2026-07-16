@@ -60,5 +60,3 @@ export function HeroSection({weatherData, cityName, weatherCityName}: HeroSectio
         </div>
     );
 }
-
-export default HeroSection;

@@ -42,5 +42,3 @@ export function HourlyForecast({ forecastData }: HourlyForecastProps) {
         </div>
     );
 }
-
-export default HourlyForecast;

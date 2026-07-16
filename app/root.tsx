@@ -8,6 +8,7 @@ import {
 } from "react-router";
 
 import type {Route} from "./+types/root";
+import type {ReactNode} from 'react';
 import "./app.css";
 import {AuthProvider} from "~/shared/context/AuthContext";
 
@@ -28,7 +29,7 @@ export const links: Route.LinksFunction = () => [
     },
 ];
 
-export function Layout({children}: { children: React.ReactNode }) {
+export function Layout({children}: { children: ReactNode }) {
     return (
         <html lang="en">
         <head>

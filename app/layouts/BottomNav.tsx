@@ -6,9 +6,7 @@ export function BottomNav() {
 
     const tabs = [
         {id: 'weather', label: 'Weather', icon: 'sunny', path: '/dashboard'},
-        {id: 'cities', label: 'Cities', icon: 'list', path: '/cities'},
-        {id: 'search', label: 'Search', icon: 'search', path: '/search'},
-        {id: 'settings', label: 'Settings', icon: 'settings', path: '/settings'},
+        {id: 'favorites', label: 'Favorites', icon: 'location_city', path: '/favorites'},
     ];
 
     return (

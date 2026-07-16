@@ -33,6 +33,7 @@ export interface CurrentWeatherResponse {
     visibility: number;
     clouds: { all: number };
     dt: number;
+    timezone: number;
     sys: {
         country: string;
         sunrise: number;
