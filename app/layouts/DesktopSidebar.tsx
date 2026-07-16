@@ -1,10 +1,10 @@
-import { NavLink } from 'react-router';
-import { Icon } from '~/shared/Icon';
+import {NavLink} from 'react-router';
+import {Icon} from '~/shared/Icon';
 
 export function DesktopSidebar() {
     const menuItems = [
-        { label: 'Weather', icon: 'cloud', to: '/dashboard' },
-        { label: 'Favorites', icon: 'location_city', to: '/favorites' },
+        {label: 'Weather', icon: 'cloud', to: '/dashboard'},
+        {label: 'Favorites', icon: 'location_city', to: '/favorites'},
     ];
 
     return (
@@ -19,7 +19,7 @@ export function DesktopSidebar() {
                     <NavLink
                         key={item.to}
                         to={item.to}
-                        className={({ isActive }) =>
+                        className={({isActive}) =>
                             `flex items-center gap-4 px-4 py-3 rounded-2xl font-medium transition-colors ${
                                 isActive
                                     ? 'bg-skyBlue text-darkCyan'
@@ -27,9 +27,9 @@ export function DesktopSidebar() {
                             }`
                         }
                     >
-                        {({ isActive }) => (
+                        {({isActive}) => (
                             <>
-                                <Icon name={item.icon} filled={isActive} className="text-2xl" />
+                                <Icon name={item.icon} filled={isActive} className="text-2xl"/>
                                 {item.label}
                             </>
                         )}
@@ -37,18 +37,10 @@ export function DesktopSidebar() {
                 ))}
             </nav>
 
-            <div className="my-6">
-                <button className="w-full bg-skyBlue text-darkCyan py-4 rounded-2xl font-bold hover:bg-lightBlue transition-colors shadow-[0_20px_25px_-5px_rgba(14,165,233,0.1)]">
-                    Add New City
-                </button>
-            </div>
-
             <div className="flex flex-col gap-2 border-t border-borderGray pt-4">
-                <NavLink to="/settings" className="flex items-center gap-4 px-4 py-2 text-gray hover:text-lightBlue transition-colors">
-                    <Icon name="settings" className="text-xl" /> Settings
-                </NavLink>
-                <NavLink to="/support" className="flex items-center gap-4 px-4 py-2 text-gray hover:text-lightBlue transition-colors">
-                    <Icon name="help" className="text-xl" /> Support
+                <NavLink to="/settings"
+                         className="flex items-center gap-4 px-4 py-2 text-gray hover:text-lightBlue transition-colors">
+                    <Icon name="settings" className="text-xl"/> Settings
                 </NavLink>
             </div>
         </div>

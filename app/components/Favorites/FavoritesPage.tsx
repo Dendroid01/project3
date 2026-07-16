@@ -1,9 +1,10 @@
 import {useNavigate} from 'react-router';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import {Icon} from '~/shared/Icon';
 import {getFavorites, removeFavorite} from '~/shared/services/favoritesService';
 import {getCurrentWeather} from '~/shared/services/weatherService';
 import type {CurrentWeatherResponse} from "~/shared/services/weatherService";
+import {LocalSearchInput} from './LocalSearchInput';
 
 import {CityCard} from './CityCard';
 import {FavoritesHeader} from './FavoritesHeader';
@@ -27,6 +28,7 @@ export function FavoritesPage() {
 
     const [citiesWithWeather, setCitiesWithWeather] = useState<CityWithWeather[]>([]);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(''); // <- ПЕРЕМЕСТИЛИ ВНУТРЬ КОМПОНЕНТА
 
     useEffect(() => {
         const loadFavorites = async () => {
@@ -56,6 +58,12 @@ export function FavoritesPage() {
         navigate(`/dashboard?city=${encodeURIComponent(city.name)}`);
     };
 
+    const filteredCities = useMemo(() => {
+        if (!searchQuery.trim()) return citiesWithWeather;
+        const q = searchQuery.toLowerCase().trim();
+        return citiesWithWeather.filter(city => city.name.toLowerCase().includes(q));
+    }, [citiesWithWeather, searchQuery]);
+
     return (
         <div className="flex min-h-screen bg-navy">
             <div
@@ -64,12 +72,24 @@ export function FavoritesPage() {
             </div>
 
             <div className="flex-1 flex flex-col min-h-screen">
-
                 <div className="lg:hidden p-4 bg-navy border-b border-borderGray">
                     <h1 className="text-lightBlue text-xl font-bold">SkyGlass</h1>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 lg:p-8 relative pb-32 lg:pb-8">
+                    <div className="mb-6">
+                        <LocalSearchInput
+                            value={searchQuery}
+                            onChange={setSearchQuery}
+                            placeholder="Search in favorites..."
+                        />
+                        {searchQuery && (
+                            <p className="text-gray text-sm mt-2">
+                                Found {filteredCities.length} of {citiesWithWeather.length} cities
+                            </p>
+                        )}
+                    </div>
+
                     <FavoritesHeader
                         isEditMode={isEditMode}
                         onToggleEdit={() => setIsEditMode(!isEditMode)}
@@ -85,9 +105,19 @@ export function FavoritesPage() {
                                 Search for a city
                             </button>
                         </div>
+                    ) : filteredCities.length === 0 ? (
+                        <div className="bg-darkBlue rounded-3xl border border-borderGray p-8 text-center">
+                            <p className="text-gray text-lg">No cities match "{searchQuery}"</p>
+                            <button
+                                onClick={() => setSearchQuery('')}
+                                className="mt-4 px-6 py-2 bg-darkBlue/50 text-lightBlue rounded-xl border border-borderGray hover:border-skyBlue transition-colors"
+                            >
+                                Clear search
+                            </button>
+                        </div>
                     ) : (
                         <div className="flex flex-col gap-4">
-                            {citiesWithWeather.map((city) => (
+                            {filteredCities.map((city) => (
                                 <CityCard
                                     key={city.id}
                                     id={city.id}
@@ -100,7 +130,6 @@ export function FavoritesPage() {
                             ))}
                         </div>
                     )}
-
                 </div>
                 <div className="lg:hidden">
                     <BottomNav/>
