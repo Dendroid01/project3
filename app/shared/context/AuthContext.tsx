@@ -35,30 +35,23 @@ const getStoredUser = (): User | null => {
 };
 
 export function AuthProvider({children}: { children: ReactNode }) {
-    const [user, setUser] = useState<User | null>(() => getStoredUser());
+    const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
-        const stored = getStoredUser();
-        setUser(stored);
-        setIsInitialized(true);
+        setUser(getStoredUser());
     }, []);
 
     const login = async (email: string, password: string) => {
         setIsLoading(true);
-
         const found = MOCK_USERS.find((u) => u.email === email && u.password === password);
         if (found) {
             const userData: User = {email: found.email, name: found.name};
             setUser(userData);
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('user', JSON.stringify(userData));
-            }
+            localStorage.setItem('user', JSON.stringify(userData));
             setIsLoading(false);
             return {success: true};
         }
-
         setIsLoading(false);
         return {
             success: false,
@@ -68,32 +61,21 @@ export function AuthProvider({children}: { children: ReactNode }) {
 
     const logout = () => {
         setUser(null);
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem('user');
-        }
+        localStorage.removeItem('user');
     };
-
-    if (!isInitialized) {
-        return null;
-    }
 
     const register = async (fullname: string, email: string, password: string) => {
         setIsLoading(true);
-
         const existing = MOCK_USERS.find((u) => u.email === email);
         if (existing) {
             setIsLoading(false);
             return {success: false, error: 'Пользователь с таким email уже существует'};
         }
-
         const newUser = {email, password, name: fullname};
         MOCK_USERS.push(newUser);
-
         const userData: User = {email: newUser.email, name: newUser.name};
         setUser(userData);
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('user', JSON.stringify(userData));
-        }
+        localStorage.setItem('user', JSON.stringify(userData));
         setIsLoading(false);
         return {success: true};
     };
