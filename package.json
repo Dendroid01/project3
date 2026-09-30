@@ -6,8 +6,7 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc",
-    "postbuild": "cp build/client/index.html build/client/404.html && touch build/client/.nojekyll"
+    "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
